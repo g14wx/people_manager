@@ -1,4 +1,7 @@
 node_modules
 .idea
-.env*
+.env
+.env.development
+.env.test
+.env.production
 dist/

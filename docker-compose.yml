@@ -51,7 +51,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: dependencies
-    command: npm run test
+    command: npm run test-docker
     env_file:
       - .env.test
     depends_on:
