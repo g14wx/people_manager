@@ -8,6 +8,8 @@ Optional (But recommended):
 - docker 27.3.1
 - docker-compose 2.29.7
 
+I recommend using docker for development, but if you want to run it locally, you can do it too.
+
 ## Setup
 1. Clone the repository
 ```bash
@@ -121,4 +123,12 @@ docker-compose run --rm test-runner
 To kill everything you can run
 ```bash
 docker-compose down -v
+```
+
+
+# FAQ
+
+If you want to explore all the endpoints, try swagger
+```bash
+http://localhost:3000/api-docs
 ```
