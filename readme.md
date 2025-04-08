@@ -26,9 +26,9 @@ info
 
 4. Create a PostgreSQL database (you choose the name of the db, but please make sure you update the `DATABASE_URL` in the `.env` file accordingly)
 
-6. Seed the database with some initial data
+6. Create and Seed the database with some initial data
 ```bash
-npx run db:seed
+npm run db:migrate:dev && npm run db:seed
 ```
 7. Start the application
 ```bash
