@@ -1,14 +1,69 @@
-import express, { Request, Response } from 'express';
+import 'source-map-support/register';
+import { config } from './config';
+import logger from './infrastructure/logging/logger';
+import { createServer } from './infrastructure/web/server';
+import { PrismaPersonRepository } from './infrastructure/database/repositories/PrismaPersonRepository';
+import { CreatePersonUseCase } from './application/use-cases/CreatePerson.usecase';
+import { GetAllPersonsUseCase } from './application/use-cases/GetAllPersons.usecase';
+import { GetActivePersonsUseCase } from './application/use-cases/GetActivePersons.usecase';
+import { PersonController } from './infrastructure/web/controllers/PersonController';
+import prisma from './infrastructure/database/prisma';
 
-const app = express();
-const port =3000;
+export function createDependencies() {
+    const personRepository = new PrismaPersonRepository();
 
-app.get('/', (req: Request, res: Response) => {
-    res.json({ message: 'its working now' });
-});
+    const createPersonUseCase = new CreatePersonUseCase(personRepository);
+    const getAllPersonsUseCase = new GetAllPersonsUseCase(personRepository);
+    const getActivePersonsUseCase = new GetActivePersonsUseCase(personRepository);
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+    const personController = new PersonController(
+        createPersonUseCase,
+        getAllPersonsUseCase,
+        getActivePersonsUseCase
+    );
 
-export default app;
+    return {
+        personRepository,
+        personController,
+    };
+}
+
+async function bootstrap() {
+    try {
+        logger.info('application its starting...');
+
+        await prisma.$connect();
+        logger.info('Database connected');
+
+        // Instantiate dependencies
+        const { personController } = createDependencies();
+
+        // Create Express server instance
+        const app = createServer(personController);
+
+        // Start the server
+        const server = app.listen(config.PORT, () => {
+            logger.info(`Server listening on http://localhost:${config.PORT}`);
+            logger.info(`Environment: ${config.NODE_ENV}`);
+        });
+
+        const signals = ['SIGINT', 'SIGTERM'];
+        signals.forEach((signal) => {
+            process.on(signal, async () => {
+                logger.info(`Received ${signal}, shutting down...`);
+                server.close(async () => {
+                    logger.info('HTTP server closed');
+                    await prisma.$disconnect();
+                    logger.info('Database connection closed');
+                    process.exit(0);
+                });
+            });
+        });
+
+    } catch (error) {
+        logger.fatal({ err: error }, 'Failed to start application');
+        await prisma.$disconnect().catch(e => logger.error({err: e}, 'Error disconnecting prisma'));
+        process.exit(1);
+    }
+}
+bootstrap();

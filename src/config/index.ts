@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { z } from 'zod';
-import Envs from "@/constants/envs";
+import Envs from "../constants/envs";
 
 const nodeEnv = process.env.NODE_ENV || Envs.DEVELOPMENT;
 const envPath = path.resolve(process.cwd(), `.env.${nodeEnv}`);

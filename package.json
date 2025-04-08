@@ -3,14 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node src/main.ts",
     "build": "tsc",
+    "start": "node dist/main.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/main.js\"",
+    "dev:ts-node": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/main.ts",
+    "dev:ts-node-old": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules --no-notify src/main.ts",
     "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\" prisma/**/*.prisma",
     "db:migrate:dev": "prisma migrate dev",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
-    "db:seed": "ts-node prisma/seed.ts"
+    "db:seed": "prisma db seed",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "test:cov": "jest --coverage --runInBand"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -43,6 +52,7 @@
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2"
   }
 }
