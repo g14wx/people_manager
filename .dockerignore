@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+Dockerfile*
+docker-compose*
+.dockerignore
+.env*
+!.env.example # Optional: include an example env file
+dist
+coverage
+.git
+.vscode
+README.md

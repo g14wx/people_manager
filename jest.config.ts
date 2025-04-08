@@ -5,6 +5,11 @@ const config: Config.InitialOptions = {
     testEnvironment: 'node',
     clearMocks: true,
     coverageProvider: 'v8',
+    globals: {
+        'ts-jest': {
+            tsconfig: 'tsconfig.test.json'
+        }
+    },
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },

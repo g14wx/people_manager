@@ -1,0 +1,122 @@
+services:
+  dev-app:
+    container_name: person-api-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dependencies
+    volumes:
+      - ./docker-compose/app/app-start-dev.sh:/usr/local/bin/startup.sh
+      - ./src:/usr/src/app/src
+      - ./prisma:/usr/src/app/prisma
+      - ./tests:/usr/src/app/tests
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./tsconfig.test.json:/usr/src/app/tsconfig.test.json
+      - ./jest.config.ts:/usr/src/app/jest.config.ts
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.development
+    depends_on:
+      dev-db:
+        condition: service_healthy
+    networks:
+      - person-app-network
+    entrypoint: ['/bin/sh', '/usr/local/bin/startup.sh']
+
+
+  dev-db:
+    container_name: person-db-dev
+    image: postgres:16-alpine
+    ports:
+      - "5434:5432"
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: peoplemanager_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - person-app-network
+
+  test-runner:
+    container_name: person-api-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dependencies
+    command: npm run test
+    env_file:
+      - .env.test
+    depends_on:
+      test-db:
+        condition: service_healthy
+    networks:
+      - person-app-network
+
+  test-db:
+    container_name: person-db-test
+    image: postgres:16-alpine
+    volumes:
+      - test-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: peoplemanager_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+    networks:
+      - person-app-network
+
+  prod-app:
+    container_name: person-api-prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.production
+    depends_on:
+      prod-db:
+        condition: service_healthy
+    networks:
+      - person-app-network
+    restart: unless-stopped
+
+  prod-db:
+    container_name: person-db-prod
+    image: postgres:16-alpine
+    volumes:
+      - prod-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: prod_user_from_env_or_secret
+      POSTGRES_PASSWORD: prod_password_from_env_or_secret
+      POSTGRES_DB: peoplemanager_prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - person-app-network
+    restart: unless-stopped
+
+volumes:
+  dev-db-data:
+  test-db-data:
+  prod-db-data:
+
+networks:
+  person-app-network:
+    driver: bridge
