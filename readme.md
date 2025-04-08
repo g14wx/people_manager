@@ -102,8 +102,12 @@ if you are using docker, please make sure (if you have a postgres db running in 
 ```bash
 docker-compose up dev-app dev-db
 ```
-if something is not working, you can try to build the images again
+
+(Optionality, if you want to run this in the background, you can add the -d flag)
+
 ```bash
+
+if something is not working, you can try to build the images again
 ````bash
 docker-compose up --build dev-app dev-db
 ````
@@ -111,4 +115,10 @@ docker-compose up --build dev-app dev-db
 #### Start testing 
 ```bash
 docker-compose run --rm test-runner
+```
+
+
+To kill everything you can run
+```bash
+docker-compose down -v
 ```
