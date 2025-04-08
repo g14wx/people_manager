@@ -132,3 +132,53 @@ If you want to explore all the endpoints, try swagger
 ```bash
 http://localhost:3000/api-docs
 ```
+
+# Final notes
+## Technology Stack & Key Decisions
+
+This project utilizes a modern and robust technology stack chosen for development speed, reliability, and ease of use.
+
+* **ORM: Prisma**
+    * Selected for its exceptional developer experience, type safety, and ease of getting started.
+    * Prisma simplifies database interactions and provides auto-generated types, significantly speeding up development while reducing runtime errors.
+    * Its capabilities cover the essential needs of an ORM effectively.
+
+* **Database: PostgreSQL**
+    * Chosen to mirror real-world production environments, offering robust features and data integrity.
+    * Prisma integrates seamlessly with PostgreSQL.
+
+* **Web Framework: Express.js**
+    * Serves as the foundation for the REST API.
+    * Valued for its minimalist core and immense flexibility, allowing developers to build tailored solutions without being overly opinionated.
+    * Its vast ecosystem and large community provide extensive resources and support, making it a reliable choice for building scalable applications.
+
+* **Testing: Jest & Supertest**
+    * **Jest:** Employed as the primary framework for unit and integration testing, known for its simplicity and powerful assertion capabilities.
+    * **Supertest:** Used specifically for testing HTTP endpoints, enabling straightforward and readable API tests.
+    * This combination facilitates Test-Driven Development (TDD) and ensures code reliability with a low barrier to entry for developers.
+
+* **API Documentation: Swagger (OpenAPI)**
+    * Integrated using `swagger-ui-express` and `swagger-jsdoc`.
+    * Provides interactive API documentation, allowing developers and consumers to easily explore and test the available endpoints directly from the browser (typically available at `/api-docs`).
+
+* **Continuous Integration: GitHub Actions**
+    * A CI pipeline is configured using GitHub Actions to automatically build, lint, and run tests on every push and pull request.
+    * Ensuring the pipeline passes is a critical quality gate before any code review or merge, maintaining project stability and code quality.
+
+## Deployment Considerations
+
+This application is built with containerization (Docker) and standard Node.js practices, making it suitable for various deployment environments.
+
+* It is designed to be deployed to VPS environments or Platform-as-a-Service (PaaS) providers.
+* Common deployment strategies could involve using raw Nginx as a reverse proxy, or leveraging tools like Nginx Proxy Manager, Dokploy, or **Coolify** for simplified management on a Virtual Private Server (VPS).
+* Setting up a full CI/CD pipeline to automate deployment following successful CI checks is the recommended approach for production environments.
+
+## Future Improvements
+* **Authentication & Authorization**: Implement user authentication and role-based access control (RBAC) to secure endpoints and manage user permissions.
+* **Rate Limiting**: Introduce rate limiting to prevent abuse of the API and ensure fair usage.
+* **Caching**: Implement caching strategies (e.g., Redis) to improve performance for frequently accessed data.
+* **Error Handling**: Enhance error handling and logging mechanisms for better observability and debugging.
+* **Monitoring & Alerting**: Integrate monitoring tools (e.g., Prometheus, Grafana) to track application performance and set up alerts for critical issues.
+* **Documentation**: Expand API documentation and provide usage examples for better developer experience.
+* **Testing Coverage**: Increase test coverage, especially for edge cases and error scenarios.
+* **Code Quality**: Implement code quality tools (e.g., ESLint, Prettier) to maintain consistent coding standards and style.
