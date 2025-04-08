@@ -15,6 +15,7 @@ export class PersonController {
 
     async createPerson(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            console.log(req.body);
             const createPersonInput = CreatePersonSchema.parse(req.body);
             const newPerson = await this.createPersonUseCase.execute(createPersonInput);
             res.status(201).json({ success: true, data: newPerson });
