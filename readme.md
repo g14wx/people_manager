@@ -69,21 +69,46 @@ npm run test
 ```bash
 git clone https://github.com/g14wx/people_manager.git
 ```
-2. For Development, create a .env.development file
+2. For Development, create a .env.development, .env.test, .env.production files
 ```bash
-cp .env.example .env.development
+touch .env.development && touch .env.test && touch .env.production
 ```
 
-e.g
+e.g (.env.development)
 ```dotenv
 NODE_ENV=development
 PORT=3000
 DATABASE_URL="postgresql://user:password@dev-db:5432/peoplemanager_dev?schema=public"
 ```
 
+e.g (.env.test)
+```dotenv
+NODE_ENV=test
+PORT=3001
+DATABASE_URL="postgresql://test_user:test_password@test-db:5432/peoplemanager_test?schema=public"
+```
+
+e.g (.env.production)
+```dotenv
+NODE_ENV=production
+PORT=8080
+DATABASE_URL="postgresql://prod_user:prod_password@prod_db_host:5432/peoplemanager?schema=public"
+LOG_LEVEL=info
+```
+
 if you are using docker, please make sure (if you have a postgres db running in your host) is not running due to, its using the same port 5432
 
-3. Start developing
+#### Start developing
 ```bash
 docker-compose up dev-app dev-db
+```
+if something is not working, you can try to build the images again
+```bash
+````bash
+docker-compose up --build dev-app dev-db
+````
+
+#### Start testing 
+```bash
+docker-compose run --rm test-runner
 ```
